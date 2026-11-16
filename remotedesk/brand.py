@@ -62,6 +62,13 @@ sub_once(rc, r'"FileDescription", "RustDesk Remote Desktop"', f'"FileDescription
 sub_once(rc, r'"ProductName", "RustDesk"', f'"ProductName", "{NAME}"')
 sub_once(rc, r'"OriginalFilename", "rustdesk.exe"', f'"OriginalFilename", "{NAME}.exe"')
 
+# Version resources of librustdesk.dll and of the portable packer (outer .exe).
+for toml in ["Cargo.toml", "libs/portable/Cargo.toml"]:
+    p = ROOT / toml
+    sub_once(p, r'^ProductName = "RustDesk"$', f'ProductName = "{NAME}"')
+    sub_once(p, r'^FileDescription = "RustDesk Remote Desktop"$', f'FileDescription = "{NAME}"')
+    sub_once(p, r'^OriginalFilename = "rustdesk.exe"$', f'OriginalFilename = "{NAME}.exe"')
+
 # 3) Icons: use remotedesk/icon.png if present, otherwise draw a provisional one.
 from PIL import Image, ImageDraw  # noqa: E402  (pip install pillow in CI)
 
