@@ -69,6 +69,15 @@ for toml in ["Cargo.toml", "libs/portable/Cargo.toml"]:
     sub_once(p, r'^FileDescription = "RustDesk Remote Desktop"$', f'FileDescription = "{NAME}"')
     sub_once(p, r'^OriginalFilename = "rustdesk.exe"$', f'OriginalFilename = "{NAME}.exe"')
 
+# 2b) UI accent color (buttons, links, highlights).
+ACCENT = os.environ.get("RD_ACCENT", "").strip() or "0891B2"
+if not re.fullmatch(r"[0-9A-Fa-f]{6}", ACCENT):
+    die("RD_ACCENT must be a 6-digit hex color")
+dart = ROOT / "flutter/lib/common.dart"
+sub_once(dart, r"static const Color accent = Color\(0xFF0071FF\);", f"static const Color accent = Color(0xFF{ACCENT});")
+sub_once(dart, r"static const Color accent50 = Color\(0x770071FF\);", f"static const Color accent50 = Color(0x77{ACCENT});")
+sub_once(dart, r"static const Color accent80 = Color\(0xAA0071FF\);", f"static const Color accent80 = Color(0xAA{ACCENT});")
+
 # 3) Icons: use remotedesk/icon.png if present, otherwise draw a provisional one.
 from PIL import Image, ImageDraw  # noqa: E402  (pip install pillow in CI)
 
